@@ -155,6 +155,12 @@ PRODUCTOS = [
 
 
 def conectar(path: Path | str = DB_PATH) -> sqlite3.Connection:
+    path = Path(path)
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        import tempfile
+        path = Path(tempfile.gettempdir()) / "repisa.db"
     con = sqlite3.connect(str(path), check_same_thread=False)
     con.row_factory = sqlite3.Row
     con.execute("PRAGMA foreign_keys = ON")
