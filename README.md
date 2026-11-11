@@ -99,7 +99,7 @@ flowchart LR
 | Municipalidad | Licencia distrital: todos los edificios del distrito, mapa y reporte de residuos evitados | **S/ 1,500 al mes** |
 | Vecinos | Accesorios y consumibles de la tienda | **Comisión de 15%** |
 
-**Costo por usuario:** catalogar un objeto o pedir una recomendación consume del orden de cientos de tokens por llamada (la app muestra el conteo real de cada una; por medir en el piloto). Un vecino activo hace unas 5 llamadas al mes, es decir, menos de 5,000 tokens. Con Haiku eso cuesta céntimos de sol al mes `<<verificar con el precio vigente en docs.claude.com>>`. El servidor es gratis en Streamlit Community Cloud mientras dure el piloto. **El costo en tokens por departamento es una fracción mínima de los S/ 3 que paga.**
+**Costo por usuario:** catalogar un objeto o pedir una recomendación consume del orden de cientos de tokens por llamada (la app muestra el conteo real de cada una; por medir en el piloto). Un vecino activo hace pocas llamadas al mes (catalogar lo que presta y pedir recomendaciones). El costo exacto se medirá en el piloto con el conteo de tokens que muestra la app y el precio vigente de la API; se espera que sea de céntimos por departamento al mes. El servidor es gratis en Streamlit Community Cloud mientras dure el piloto. **El costo en tokens por departamento es una fracción mínima de los S/ 3 que paga.**
 
 ## 8. Herramientas del curso
 
