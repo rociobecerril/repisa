@@ -15,7 +15,8 @@ from streamlit_folium import st_folium
 
 from repisa import db, ia
 
-st.set_page_config(page_title="Repisa · biblioteca de cosas", page_icon="📦", layout="wide")
+st.set_page_config(page_title="Repisa · biblioteca de cosas", page_icon="📦", layout="wide",
+                   initial_sidebar_state="expanded")
 
 COLOR_CAT = {
     "Juegos de mesa": "#F7C6D3", "Herramientas": "#BFE3EC", "Camping y aire libre": "#CFE6A8",
@@ -37,7 +38,9 @@ st.markdown(
                               linear-gradient(90deg, rgba(29,29,27,.055) 1px, transparent 1px);
              background-size:22px 22px; }
     header[data-testid="stHeader"] { background:transparent; }
-    [data-testid="stToolbar"], [data-testid="stDecoration"], footer, #MainMenu { display:none !important; }
+    [data-testid="stToolbarActions"], [data-testid="stMainMenu"], .stAppDeployButton, [data-testid="stDecoration"], footer, #MainMenu { display:none !important; }
+    [data-testid="stExpandSidebarButton"], [data-testid="stSidebarCollapsedControl"] { display:flex !important; visibility:visible !important;
+        background:white; border:1.5px solid var(--tinta); border-radius:999px; }
     .block-container { padding-top:1.4rem; max-width:1180px; }
     [data-testid="stSidebar"] { background:#FFF6F8; border-right:1.5px solid var(--tinta); }
 
