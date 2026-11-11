@@ -108,10 +108,37 @@ def nombre_modelo() -> str:
     c = _cliente()
     if c is None:
         return ""
-    return MODELO_GEMINI if c[0] == "gemini" else MODELO
+    return _modelo_gemini(c[1]) if c[0] == "gemini" else MODELO
 
 
-MODELO_GEMINI = os.getenv("REPISA_MODELO_GEMINI", "gemini-flash-latest")
+MODELO_GEMINI = os.getenv("REPISA_MODELO_GEMINI") or _secreto("REPISA_MODELO_GEMINI") or ""
+_MODELO_ELEGIDO: dict = {}
+
+
+def _modelo_gemini(cliente) -> str:
+    """Usa el modelo indicado en Secrets o, si no hay, elige el Flash más reciente disponible para esta clave."""
+    if MODELO_GEMINI:
+        return MODELO_GEMINI
+    if "gemini" in _MODELO_ELEGIDO:
+        return _MODELO_ELEGIDO["gemini"]
+    elegido = "gemini-2.5-flash"
+    try:
+        nombres = []
+        for m in cliente.models.list():
+            acciones = getattr(m, "supported_actions", None) or []
+            nombre = (m.name or "").replace("models/", "")
+            if "generateContent" in acciones and "flash" in nombre and not any(
+                    x in nombre for x in ("lite", "image", "tts", "audio", "live", "thinking", "exp")):
+                nombres.append(nombre)
+        if nombres:
+            def clave(n):
+                nums = [float(x) for x in re.findall(r"\d+(?:\.\d+)?", n)[:1]] or [0]
+                return ("preview" not in n, nums[0], -len(n))
+            elegido = max(nombres, key=clave)
+    except Exception:
+        pass
+    _MODELO_ELEGIDO["gemini"] = elegido
+    return elegido
 
 
 def _llamar(sistema: str, contenido, nombre_tool: str, esquema: dict, max_tokens: int = 800) -> dict:
@@ -151,13 +178,13 @@ def _llamar_gemini(cliente, sistema: str, contenido, esquema: dict, max_tokens: 
                   response_mime_type="application/json")
     try:
         resp = cliente.models.generate_content(
-            model=MODELO_GEMINI, contents=partes,
+            model=_modelo_gemini(cliente), contents=partes,
             config=types.GenerateContentConfig(**config, response_json_schema=esquema))
     except Exception:
         # Si el esquema no es aceptado, se lo describimos en el prompt y pedimos JSON igual.
         partes = partes + ["Responde SOLO un JSON que cumpla este esquema: " + json.dumps(esquema, ensure_ascii=False)]
         resp = cliente.models.generate_content(
-            model=MODELO_GEMINI, contents=partes, config=types.GenerateContentConfig(**config))
+            model=_modelo_gemini(cliente), contents=partes, config=types.GenerateContentConfig(**config))
     datos = json.loads(resp.text)
     uso = getattr(resp, "usage_metadata", None)
     datos["_tokens"] = getattr(uso, "total_token_count", None) or 0

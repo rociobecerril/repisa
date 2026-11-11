@@ -91,7 +91,7 @@ flowchart LR
     DB --> TI[Tienda]
 ```
 
-**Modelos y por qué:** la app funciona con **Gemini Flash** (`gemini-flash-latest`, por su capa gratuita) o con **Claude Haiku** (`claude-haiku-5-5`), según qué clave encuentre en los Secrets (`GEMINI_API_KEY` o `ANTHROPIC_API_KEY`). Las tareas son cortas (llenar una ficha o elegir de una lista), así que un modelo rápido y barato basta. En ambos casos la salida es estructurada: con Claude se fuerza con *tool use* y con Gemini con `response_json_schema`, usando el mismo esquema JSON de `repisa/ia.py`. Después valido categorías, estados e ids contra la base. Si la API falla, entra el motor de reglas.
+**Modelos y por qué:** la app funciona con **Gemini Flash** (la versión estable más reciente disponible para la clave, por su capa gratuita) o con **Claude Haiku** (`claude-haiku-5-5`), según qué clave encuentre en los Secrets (`GEMINI_API_KEY` o `ANTHROPIC_API_KEY`). Las tareas son cortas (llenar una ficha o elegir de una lista), así que un modelo rápido y barato basta. En ambos casos la salida es estructurada: con Claude se fuerza con *tool use* y con Gemini con `response_json_schema`, usando el mismo esquema JSON de `repisa/ia.py`. Después valido categorías, estados e ids contra la base. Si la API falla, entra el motor de reglas.
 
 ## 7. Modelo de negocio
 
