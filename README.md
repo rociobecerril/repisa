@@ -65,7 +65,7 @@ Las entrevistas lo confirman: 2 de 3 personas hoy no prestarían a un vecino ("p
 git clone https://github.com/rociobecerril/repisa.git
 cd repisa
 pip install -r requirements.txt
-cp .env.example .env        # opcional: pon tu ANTHROPIC_API_KEY
+cp .env.example .env        # opcional: pon tu GEMINI_API_KEY o ANTHROPIC_API_KEY
 streamlit run app.py
 ```
 
@@ -91,7 +91,7 @@ flowchart LR
     DB --> TI[Tienda]
 ```
 
-**Modelos y por qué:** uso **Claude Haiku** (`claude-haiku-5-5`) porque las tareas son cortas (llenar una ficha o elegir de una lista), necesito salidas estructuradas confiables y el costo por llamada debe ser mínimo. La salida estructurada se fuerza con *tool use*: el modelo solo puede responder llenando el esquema JSON definido en `repisa/ia.py`, y luego valido categorías, estados e ids contra la base. Si la API falla, entra el motor de reglas.
+**Modelos y por qué:** la app funciona con **Gemini Flash** (`gemini-flash-latest`, por su capa gratuita) o con **Claude Haiku** (`claude-haiku-5-5`), según qué clave encuentre en los Secrets (`GEMINI_API_KEY` o `ANTHROPIC_API_KEY`). Las tareas son cortas (llenar una ficha o elegir de una lista), así que un modelo rápido y barato basta. En ambos casos la salida es estructurada: con Claude se fuerza con *tool use* y con Gemini con `response_json_schema`, usando el mismo esquema JSON de `repisa/ia.py`. Después valido categorías, estados e ids contra la base. Si la API falla, entra el motor de reglas.
 
 ## 7. Modelo de negocio
 

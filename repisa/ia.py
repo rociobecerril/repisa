@@ -70,29 +70,54 @@ ESQUEMA_RECOMENDACION = {
 }
 
 
-def _cliente():
-    clave = os.getenv("ANTHROPIC_API_KEY")
-    if not clave:
-        try:
-            import streamlit as st
-            clave = st.secrets.get("ANTHROPIC_API_KEY")  # Streamlit Community Cloud
-        except Exception:
-            clave = None
-    if not clave:
-        return None
+def _secreto(nombre: str) -> str | None:
+    valor = os.getenv(nombre)
+    if valor:
+        return valor
     try:
-        import anthropic
-        return anthropic.Anthropic(api_key=clave)
+        import streamlit as st
+        return st.secrets.get(nombre)  # Streamlit Community Cloud
     except Exception:
         return None
+
+
+def _cliente():
+    """Devuelve (proveedor, cliente). Prioriza Gemini (tiene capa gratuita) y luego Claude."""
+    clave = _secreto("GEMINI_API_KEY") or _secreto("GOOGLE_API_KEY")
+    if clave:
+        try:
+            from google import genai
+            return "gemini", genai.Client(api_key=clave)
+        except Exception:
+            pass
+    clave = _secreto("ANTHROPIC_API_KEY")
+    if clave:
+        try:
+            import anthropic
+            return "claude", anthropic.Anthropic(api_key=clave)
+        except Exception:
+            pass
+    return None
 
 
 def hay_ia() -> bool:
     return _cliente() is not None
 
 
+def nombre_modelo() -> str:
+    c = _cliente()
+    if c is None:
+        return ""
+    return MODELO_GEMINI if c[0] == "gemini" else MODELO
+
+
+MODELO_GEMINI = os.getenv("REPISA_MODELO_GEMINI", "gemini-flash-latest")
+
+
 def _llamar(sistema: str, contenido, nombre_tool: str, esquema: dict, max_tokens: int = 800) -> dict:
-    cliente = _cliente()
+    proveedor, cliente = _cliente()
+    if proveedor == "gemini":
+        return _llamar_gemini(cliente, sistema, contenido, esquema, max_tokens)
     resp = cliente.messages.create(
         model=MODELO,
         max_tokens=max_tokens,
@@ -105,6 +130,38 @@ def _llamar(sistema: str, contenido, nombre_tool: str, esquema: dict, max_tokens
         if bloque.type == "tool_use":
             return dict(bloque.input) | {"_tokens": resp.usage.input_tokens + resp.usage.output_tokens}
     raise RuntimeError("El modelo no devolvió la ficha.")
+
+
+def _llamar_gemini(cliente, sistema: str, contenido, esquema: dict, max_tokens: int) -> dict:
+    """Salida estructurada con Gemini: response_mime_type JSON + esquema."""
+    import json
+    from google.genai import types
+
+    if isinstance(contenido, str):
+        partes = [contenido]
+    else:
+        partes = []
+        for c in contenido:
+            if c["type"] == "text":
+                partes.append(c["text"])
+            elif c["type"] == "image":
+                partes.append(types.Part.from_bytes(
+                    data=base64.b64decode(c["source"]["data"]), mime_type=c["source"]["media_type"]))
+    config = dict(system_instruction=sistema, max_output_tokens=max_tokens * 2, temperature=0.3,
+                  response_mime_type="application/json")
+    try:
+        resp = cliente.models.generate_content(
+            model=MODELO_GEMINI, contents=partes,
+            config=types.GenerateContentConfig(**config, response_json_schema=esquema))
+    except Exception:
+        # Si el esquema no es aceptado, se lo describimos en el prompt y pedimos JSON igual.
+        partes = partes + ["Responde SOLO un JSON que cumpla este esquema: " + json.dumps(esquema, ensure_ascii=False)]
+        resp = cliente.models.generate_content(
+            model=MODELO_GEMINI, contents=partes, config=types.GenerateContentConfig(**config))
+    datos = json.loads(resp.text)
+    uso = getattr(resp, "usage_metadata", None)
+    datos["_tokens"] = getattr(uso, "total_token_count", None) or 0
+    return datos
 
 
 # ---------------------------------------------------------------- catalogar

@@ -132,9 +132,9 @@ with st.sidebar:
     ver_barrio = st.toggle("Ver también otros edificios del barrio", value=False)
     st.divider()
     if ia.hay_ia():
-        st.success(f"IA activa · {ia.MODELO}", icon="✨")
+        st.success(f"IA activa · {ia.nombre_modelo()}", icon="✨")
     else:
-        st.info("Modo sin IA: catalogo por reglas. Agrega ANTHROPIC_API_KEY para activar la IA.", icon="ℹ️")
+        st.info("Modo sin IA: catálogo por reglas. Agrega GEMINI_API_KEY (o ANTHROPIC_API_KEY) en Secrets para activar la IA.", icon="ℹ️")
     st.caption("Demo con datos sintéticos: vecinos identificados solo por departamento.")
 
 if "carrito" not in st.session_state:
@@ -264,6 +264,7 @@ with tab_prestar:
         ficha, origen = st.session_state.ficha_ia
         if origen == "reglas" and ficha.get("_error"):
             st.warning("La IA no respondió; usé el catalogador de reglas.")
+            st.caption(f"Detalle: {ficha['_error']}")
         st.markdown(f"**Ficha propuesta** {'✨ por IA' if origen == 'ia' else '⚙️ por reglas'}"
                     + (f" · {ficha['_tokens']} tokens" if ficha.get("_tokens") else ""))
         with st.form("ficha"):
