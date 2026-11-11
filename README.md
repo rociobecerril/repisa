@@ -47,6 +47,8 @@ Repisa tiene cinco partes:
 
 **Insight:** la gente no comparte, no por egoísmo, sino por **fricción y desconfianza**. Catalogar un objeto da flojera y prestarlo da miedo. La IA elimina la flojera (la ficha se arma en 5 segundos) y las reglas eliminan el miedo (garantía, plazo y reputación). Un grupo de WhatsApp no puede hacer ninguna de las dos cosas.
 
+Las entrevistas lo confirman: 2 de 3 personas hoy no prestarían a un vecino ("por si me lo malogran"), y las tres pidieron mecanismos de confianza: garantía, un responsable del estado del objeto, foto de entrega y devolución, e historial de préstamos cumplidos.
+
 ## 5. Why now
 
 - Hace tres años catalogar un objeto a partir de una frase o una foto requería un formulario largo. Hoy un LLM multimodal devuelve una **ficha estructurada** confiable por una fracción de céntimo.
@@ -98,6 +100,8 @@ flowchart LR
 | Junta de propietarios | Repisa para su edificio (reservas, garantías, panel) | **S/ 3 por departamento al mes** (S/ 120 para 40 dptos.) |
 | Municipalidad | Licencia distrital: todos los edificios del distrito, mapa y reporte de residuos evitados | **S/ 1,500 al mes** |
 | Vecinos | Accesorios y consumibles de la tienda | **Comisión de 15%** |
+
+Referencia de las entrevistas: una persona dijo que pagaría "creo que 20 soles" al mes según la cantidad de cosas disponibles; S/ 3 por departamento pagado por la junta queda muy por debajo de esa disposición a pagar.
 
 **Costo por usuario:** catalogar un objeto o pedir una recomendación consume del orden de cientos de tokens por llamada (la app muestra el conteo real de cada una; por medir en el piloto). Un vecino activo hace pocas llamadas al mes (catalogar lo que presta y pedir recomendaciones). El costo exacto se medirá en el piloto con el conteo de tokens que muestra la app y el precio vigente de la API; se espera que sea de céntimos por departamento al mes. El servidor es gratis en Streamlit Community Cloud mientras dure el piloto. **El costo en tokens por departamento es una fracción mínima de los S/ 3 que paga.**
 
