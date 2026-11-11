@@ -5,3 +5,6 @@ data/*.db
 .streamlit/secrets.toml
 .venv/
 .pytest_cache/
+transcripciones/
+entrevistas/
+*.m4a
