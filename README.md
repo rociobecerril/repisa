@@ -47,7 +47,7 @@ Repisa tiene cinco partes:
 
 **Insight:** la gente no comparte, no por egoísmo, sino por **fricción y desconfianza**. Catalogar un objeto da flojera y prestarlo da miedo. La IA elimina la flojera (la ficha se arma en 5 segundos) y las reglas eliminan el miedo (garantía, plazo y reputación). Un grupo de WhatsApp no puede hacer ninguna de las dos cosas.
 
-Las entrevistas lo confirman: 2 de 3 personas hoy no prestarían a un vecino ("por si me lo malogran"), y las tres pidieron mecanismos de confianza: garantía, un responsable del estado del objeto, foto de entrega y devolución, e historial de préstamos cumplidos.
+Las entrevistas lo confirman: 2 de 3 personas hoy no prestarían a un vecino ("por si me lo malogran"), y las tres condicionaron prestar a algún tipo de confianza (que sepa usarlo, garantía y responsable, o historial de préstamos cumplidos).
 
 ## 5. Why now
 
