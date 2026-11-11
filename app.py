@@ -18,64 +18,91 @@ from repisa import db, ia
 st.set_page_config(page_title="Repisa · biblioteca de cosas", page_icon="📦", layout="wide")
 
 COLOR_CAT = {
-    "Juegos de mesa": "#F6E3C6", "Herramientas": "#E4E9DD", "Camping y aire libre": "#DCE8E2",
-    "Cocina y fiestas": "#F7DCD0", "Bebés y niños": "#F3E1EA", "Deporte": "#E2E4F2",
-    "Tecnología": "#DFE7EF", "Hogar y limpieza": "#EDE6D8", "Otros": "#ECE8E1",
+    "Juegos de mesa": "#F7C6D3", "Herramientas": "#BFE3EC", "Camping y aire libre": "#CFE6A8",
+    "Cocina y fiestas": "#FBE7A1", "Bebés y niños": "#F7C6D3", "Deporte": "#BFE3EC",
+    "Tecnología": "#D9CFF3", "Hogar y limpieza": "#CFE6A8", "Otros": "#FBE7A1",
 }
 
 st.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=DM+Sans:wght@400;500;700&display=swap');
-    :root { --tinta:#2B2118; --suave:#7A6A5B; --acento:#C2562F; --madera:#8B5E3C; --papel:#FBF7F0; --linea:#E8DFD2; }
-    html, body, [class*="css"], .stMarkdown, p, label, input, textarea, button { font-family:'DM Sans', sans-serif !important; }
-    h1, h2, h3, .serif { font-family:'Fraunces', Georgia, serif !important; letter-spacing:-.01em; color:var(--tinta); }
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400..900,0..100&family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap');
+    :root { --tinta:#1D1D1B; --suave:#5F5A52; --rosa:#F7B8C9; --rosa2:#F7C6D3; --celeste:#BFE3EC;
+            --verde:#CFE6A8; --amarillo:#FBE7A1; --papel:#FFFDF6; }
+    html, body, p, label, input, textarea, button, .stMarkdown { font-family:'DM Sans', sans-serif !important; }
+    h1, h2, h3, .serif { font-family:'Fraunces', Georgia, serif !important; font-variation-settings:"SOFT" 100;
+                         font-weight:800 !important; letter-spacing:-.02em; color:var(--tinta); }
+    .stApp { background-color:var(--papel);
+             background-image:linear-gradient(rgba(29,29,27,.055) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(29,29,27,.055) 1px, transparent 1px);
+             background-size:22px 22px; }
     header[data-testid="stHeader"] { background:transparent; }
     [data-testid="stToolbar"], [data-testid="stDecoration"], footer, #MainMenu { display:none !important; }
-    .block-container { padding-top:1.6rem; max-width:1180px; }
-    [data-testid="stSidebar"] { background:#F3ECE1; border-right:1px solid var(--linea); }
+    .block-container { padding-top:1.4rem; max-width:1180px; }
+    [data-testid="stSidebar"] { background:#FFF6F8; border-right:1.5px solid var(--tinta); }
+
+    .mono { font-family:'DM Mono', monospace !important; text-transform:uppercase; letter-spacing:.06em; font-size:.72rem; }
+    .etiqueta { display:inline-block; background:var(--celeste); padding:3px 8px; font-family:'DM Mono',monospace;
+                text-transform:uppercase; letter-spacing:.05em; font-size:.68rem; color:var(--tinta); line-height:1.35; }
 
     /* portada */
-    .hero { background:linear-gradient(135deg,#F7EBDD 0%,#FBF7F0 60%); border:1px solid var(--linea);
-            border-radius:22px; padding:28px 32px 22px; margin-bottom:18px; position:relative; overflow:hidden; }
-    .hero:after { content:""; position:absolute; left:32px; right:32px; bottom:16px; height:7px;
-                  background:var(--madera); border-radius:4px; opacity:.85; box-shadow:0 6px 0 -2px #6d482d; }
-    .hero h1 { font-size:2.5rem; margin:0 0 4px; line-height:1.1; }
-    .hero h1 em { color:var(--acento); font-style:italic; }
-    .hero p { color:var(--suave); margin:0 0 18px; font-size:1.05rem; }
-    .estante { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:22px; }
-    .stat { background:white; border:1px solid var(--linea); border-radius:14px; padding:10px 16px; min-width:150px; }
-    .stat b { display:block; font-family:'Fraunces',serif; font-size:1.55rem; color:var(--tinta); line-height:1.1; }
-    .stat span { color:var(--suave); font-size:.82rem; }
+    .hero { text-align:center; padding:26px 10px 8px; position:relative; }
+    .hero h1 { font-size:clamp(2.6rem,6vw,4.6rem); line-height:.95; margin:10px 0 6px; text-transform:lowercase; }
+    .hero h1 .resalta { background:linear-gradient(transparent 18%, var(--rosa) 18%, var(--rosa) 88%, transparent 88%);
+                        padding:0 .12em; }
+    .hero .sub { color:var(--suave); max-width:560px; margin:10px auto 16px; font-size:1.02rem; }
+    .sticker { position:absolute; font-size:2.1rem; filter:drop-shadow(2px 2px 0 rgba(29,29,27,.15)); }
+    .pill { display:inline-flex; align-items:center; gap:8px; border:1.5px solid var(--tinta); border-radius:999px;
+            background:white; padding:6px 16px; font-size:.86rem; font-weight:500; color:var(--tinta); }
+    .pill:before { content:""; width:9px; height:9px; border-radius:50%; background:#E8578A; }
+    .cinta { overflow:hidden; white-space:nowrap; border-top:1.5px solid var(--tinta); border-bottom:1.5px solid var(--tinta);
+             background:var(--verde); margin:18px -4rem 20px; padding:7px 0; }
+    .cinta span { display:inline-block; padding-left:100%; animation:corre 28s linear infinite;
+                  font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:.08em; font-size:.74rem; }
+    @keyframes corre { to { transform:translateX(-100%); } }
+    .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:0 0 22px; }
+    .stat { border:1.5px solid var(--tinta); border-radius:14px; padding:12px 14px; }
+    .stat b { display:block; font-family:'Fraunces',serif; font-weight:800; font-size:1.8rem; line-height:1; color:var(--tinta); }
+    .stat span { font-family:'DM Mono',monospace; text-transform:uppercase; font-size:.66rem; letter-spacing:.05em; }
+    @media (max-width:700px) { .stats { grid-template-columns:repeat(2,1fr); } .sticker { display:none; } }
 
-    /* pestañas tipo píldora */
-    .stTabs [data-baseweb="tab-list"] { gap:6px; border-bottom:none; flex-wrap:wrap; }
-    .stTabs [data-baseweb="tab"] { background:white; border:1px solid var(--linea); border-radius:999px;
-                                   padding:6px 16px; height:auto; }
-    .stTabs [aria-selected="true"] { background:var(--tinta) !important; border-color:var(--tinta) !important; }
-    .stTabs [aria-selected="true"] p { color:white !important; }
+    /* pestañas */
+    .stTabs [data-baseweb="tab-list"] { gap:8px; border-bottom:none; flex-wrap:wrap; }
+    [data-testid="stTab"] { background:white !important; border:1.5px solid var(--tinta) !important; border-radius:999px !important;
+        padding:5px 14px !important; margin-right:8px; height:auto !important; }
+    [data-testid="stTab"] p { font-family:'DM Mono',monospace !important; text-transform:uppercase; font-size:.74rem !important; letter-spacing:.04em; color:var(--tinta) !important; }
+    [data-testid="stTab"][aria-selected="true"] { background:var(--rosa) !important; }
+    [data-testid="stTabs"] [role="tablist"] { border-bottom:none !important; gap:8px; flex-wrap:wrap; }
+    [data-testid="stTabs"] [role="tablist"] > div:not([data-testid="stTab"]) { display:none; }
+    [data-testid="stVerticalBlock"]:has(> [data-testid="stElementContainer"] .ficha),
+    [data-testid="stVerticalBlock"]:has(> [data-testid="stElementContainer"] .emoji) {
+        background:white; border:1.5px solid var(--tinta) !important; border-radius:16px !important; box-shadow:4px 4px 0 var(--tinta); }
+    .stTabs [data-baseweb="tab"] { background:white; border:1.5px solid var(--tinta); border-radius:999px; padding:5px 14px; height:auto; }
+    .stTabs [data-baseweb="tab"] p { font-family:'DM Mono',monospace !important; text-transform:uppercase; font-size:.74rem; letter-spacing:.04em; }
+    .stTabs [aria-selected="true"] { background:var(--rosa) !important; }
     .stTabs [data-baseweb="tab-highlight"], .stTabs [data-baseweb="tab-border"] { display:none; }
 
     /* tarjetas */
-    [data-testid="stVerticalBlockBorderWrapper"] { background:white; border-radius:18px !important;
-        border-color:var(--linea) !important; transition:box-shadow .2s, transform .2s; }
-    [data-testid="stVerticalBlockBorderWrapper"]:hover { box-shadow:0 8px 24px rgba(43,33,24,.08); }
+    [data-testid="stVerticalBlockBorderWrapper"] { background:white; border:1.5px solid var(--tinta) !important;
+        border-radius:16px !important; box-shadow:4px 4px 0 var(--tinta); }
     .ficha { display:flex; gap:14px; align-items:flex-start; }
-    .icono { width:64px; height:64px; min-width:64px; border-radius:16px; display:flex; align-items:center;
-             justify-content:center; font-size:2rem; }
-    .ficha h4 { font-family:'Fraunces',serif; font-size:1.12rem; margin:0 0 4px; color:var(--tinta); padding:0; }
+    .icono { width:64px; height:64px; min-width:64px; border-radius:14px; border:1.5px solid var(--tinta);
+             display:flex; align-items:center; justify-content:center; font-size:2rem; }
+    .ficha h4 { font-family:'Fraunces',serif; font-weight:800; font-size:1.18rem; margin:0 0 5px; color:var(--tinta); padding:0; }
     .meta { color:var(--suave); font-size:.84rem; margin-top:6px; }
-    .motivo { background:#FFF4EC; border-left:3px solid var(--acento); padding:6px 10px; border-radius:6px;
-              font-size:.9rem; margin-top:8px; color:var(--tinta); }
+    .motivo { background:var(--amarillo); border:1.5px solid var(--tinta); padding:6px 10px; border-radius:10px;
+              font-size:.88rem; margin-top:8px; color:var(--tinta); display:inline-block; }
     .emoji { font-size:2rem; line-height:1; }
-    .chip { display:inline-block; padding:2px 10px; border-radius:999px; font-size:.75rem; margin-right:6px; font-weight:500; }
-    .libre { background:#DFF0E3; color:#1F5C33; }
-    .ocupado { background:#F9E0DA; color:#8A2C17; }
-    .ia { background:#EDE7FB; color:#4B3A9C; }
-    .cat { background:#F3ECE1; color:var(--madera); }
+    .chip { display:inline-block; padding:2px 9px; border-radius:999px; font-family:'DM Mono',monospace; text-transform:uppercase;
+            font-size:.64rem; letter-spacing:.04em; margin:0 6px 3px 0; border:1.2px solid var(--tinta); }
+    .libre { background:var(--verde); } .ocupado { background:var(--rosa); } .ia { background:#D9CFF3; } .cat { background:white; }
 
-    .stButton button[kind="primary"], .stFormSubmitButton button { border-radius:999px; font-weight:700; }
+    .stButton button, .stFormSubmitButton button { border-radius:999px !important; border:1.5px solid var(--tinta) !important;
+        font-weight:600; color:var(--tinta) !important; background:white !important; }
+    .stButton button[kind="primary"], .stFormSubmitButton button { background:var(--rosa) !important; }
+    .stButton button:hover { box-shadow:2px 2px 0 var(--tinta); }
     .stTextInput input, .stTextArea textarea { border-radius:12px; }
+    [data-baseweb="input"], [data-baseweb="textarea"], [data-baseweb="select"] > div { border:1.5px solid var(--tinta) !important; border-radius:12px !important; background:white !important; }
     </style>
     """,
     unsafe_allow_html=True,
@@ -155,14 +182,21 @@ def tarjeta_objeto(o: dict, clave: str, motivo: str | None = None):
 met_ed = db.metricas(con, ed_id)
 libres_hoy = sum(o["disponible"] for o in catalogo)
 st.markdown(
-    f"""<div class="hero"><h1>Lo que tu edificio <em>ya tiene</em>.</h1>
-    <p>Pide prestado en lugar de comprar. Presta lo que guardas. Reglas claras, garantía y reservas.</p>
-    <div class="estante">
-      <div class="stat"><b>{len(catalogo)}</b><span>cosas en la repisa</span></div>
-      <div class="stat"><b>{libres_hoy}</b><span>disponibles hoy</span></div>
-      <div class="stat"><b>{met_ed['prestamos']}</b><span>préstamos registrados</span></div>
-      <div class="stat"><b>S/ {met_ed['compras_evitadas']:,}</b><span>en compras evitadas</span></div>
-    </div></div>""",
+    f"""<div class="hero">
+    <span class="sticker" style="left:6%;top:30px">🎲</span><span class="sticker" style="right:8%;top:22px">⛺</span>
+    <span class="sticker" style="left:12%;bottom:40px">🔩</span><span class="sticker" style="right:5%;bottom:60px">🧺</span>
+    <span class="etiqueta" style="transform:rotate(-2deg)">donde los vecinos se prestan las cosas</span>
+    <h1>lo que tu edificio<br><span class="resalta">ya tiene</span></h1>
+    <p class="sub">Pide prestado en lugar de comprar. Presta lo que guardas. Con reservas, garantía y reglas claras.</p>
+    <span class="pill">{nombres_ed[ed_id]} · Dpto. {yo['depto']}</span>
+    </div>
+    <div class="cinta"><span>{"pide prestado &nbsp;·&nbsp; presta lo que guardas &nbsp;·&nbsp; menos compras &nbsp;·&nbsp; más vecindad &nbsp;·&nbsp; " * 4}</span></div>
+    <div class="stats">
+      <div class="stat" style="background:var(--rosa2)"><b>{len(catalogo)}</b><span>cosas en la repisa</span></div>
+      <div class="stat" style="background:var(--celeste)"><b>{libres_hoy}</b><span>disponibles hoy</span></div>
+      <div class="stat" style="background:var(--verde)"><b>{met_ed['prestamos']}</b><span>préstamos</span></div>
+      <div class="stat" style="background:var(--amarillo)"><b>S/ {met_ed['compras_evitadas']:,}</b><span>compras evitadas</span></div>
+    </div>""",
     unsafe_allow_html=True,
 )
 
@@ -190,7 +224,7 @@ with tab_pedir:
         st.markdown(f"**Para:** _{nec}_ · {'✨ IA' if origen == 'ia' else '⚙️ reglas'}")
         if not reco["objetos"]:
             st.warning("No encontré nada en el edificio para eso.")
-        for x in reco["objetos"]:
+        for x in [x for x in reco["objetos"] if por_id[x["id"]]["dueno_id"] != yo["id"]]:
             tarjeta_objeto(por_id[x["id"]], f"r{x['id']}", x.get("por_que"))
         if reco.get("falta"):
             st.info(f"🧩 No hay en el edificio: {reco['falta']}")
@@ -299,7 +333,7 @@ with tab_tienda:
     for i, p in enumerate(productos):
         with cols[i % 3].container(border=True):
             es_sug = any(s.lower()[:12] in p["nombre"].lower() for s in sugeridos)
-            st.markdown(f"<div class='emoji'>{p['emoji']}</div>**{p['nombre']}**" + (" · ⭐ para ti" if es_sug else ""),
+            st.markdown(f"<div class='emoji'>{p['emoji']}</div><b>{p['nombre']}</b>" + (" <span class='chip ia'>⭐ para ti</span>" if es_sug else ""),
                         unsafe_allow_html=True)
             st.caption(f"{p['categoria']} · S/ {p['precio_soles']:.2f}")
             if st.button("Agregar", key=f"p{p['id']}"):
@@ -321,7 +355,7 @@ with tab_panel:
               help="Suma del valor de los objetos prestados: lo que cada vecino no tuvo que comprar.")
     if met["por_categoria"]:
         df = pd.DataFrame(met["por_categoria"]).set_index("categoria")
-        st.bar_chart(df, horizontal=True, height=280)
+        st.bar_chart(df, horizontal=True, height=280, color="#E8578A")
     st.caption(
         "Cada préstamo es una compra que no se hizo: menos gasto para las familias y menos residuos para la "
         "municipalidad. Es un bien común con reglas claras (plazo, garantía y reputación)."
