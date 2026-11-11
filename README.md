@@ -2,7 +2,7 @@
 
 > **Hacemos que los vecinos compartan lo que tienen guardado, para edificios y municipalidades, mediante un catálogo y un asistente con IA.**
 
-**Demo:** `<<pega aquí la URL de Streamlit Cloud>>` · **Video de respaldo:** `<<link>>`
+**Demo:** https://repisa-lima.streamlit.app · **Video de respaldo:** https://drive.google.com/file/d/1_y92VojJojPvmtWDQc_6RPGdBqFLoJ5k/view?usp=sharing
 Proyecto final de la Diplomatura de Ciencia de Datos para las Ciencias Sociales y la Gestión Pública (Q-Lab PUCP), [issue #204](https://github.com/d2cml-ai/Data-Science-Python/issues/204).
 
 ![Pedir prestado](docs/img/1_pedir.png)
@@ -57,7 +57,7 @@ Las entrevistas lo confirman: 2 de 3 personas hoy no prestarían a un vecino ("p
 
 ## 6. Demo
 
-**URL:** `<<URL pública>>`
+**URL:** https://repisa-lima.streamlit.app
 
 **Correrlo en local:**
 
