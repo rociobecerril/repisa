@@ -17,15 +17,65 @@ from repisa import db, ia
 
 st.set_page_config(page_title="Repisa · biblioteca de cosas", page_icon="📦", layout="wide")
 
+COLOR_CAT = {
+    "Juegos de mesa": "#F6E3C6", "Herramientas": "#E4E9DD", "Camping y aire libre": "#DCE8E2",
+    "Cocina y fiestas": "#F7DCD0", "Bebés y niños": "#F3E1EA", "Deporte": "#E2E4F2",
+    "Tecnología": "#DFE7EF", "Hogar y limpieza": "#EDE6D8", "Otros": "#ECE8E1",
+}
+
 st.markdown(
     """
     <style>
-    .tarjeta {border:1px solid rgba(128,128,128,.25); border-radius:14px; padding:14px 16px; margin-bottom:10px;}
-    .emoji {font-size:2rem; line-height:1;}
-    .chip {display:inline-block; padding:2px 10px; border-radius:999px; font-size:.78rem; margin-right:6px;}
-    .libre {background:#d9f2e3; color:#145c32;}
-    .ocupado {background:#fde2e1; color:#8a1c17;}
-    .ia {background:#e7e3fb; color:#3d2c8d;}
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=DM+Sans:wght@400;500;700&display=swap');
+    :root { --tinta:#2B2118; --suave:#7A6A5B; --acento:#C2562F; --madera:#8B5E3C; --papel:#FBF7F0; --linea:#E8DFD2; }
+    html, body, [class*="css"], .stMarkdown, p, label, input, textarea, button { font-family:'DM Sans', sans-serif !important; }
+    h1, h2, h3, .serif { font-family:'Fraunces', Georgia, serif !important; letter-spacing:-.01em; color:var(--tinta); }
+    header[data-testid="stHeader"] { background:transparent; }
+    [data-testid="stToolbar"], [data-testid="stDecoration"], footer, #MainMenu { display:none !important; }
+    .block-container { padding-top:1.6rem; max-width:1180px; }
+    [data-testid="stSidebar"] { background:#F3ECE1; border-right:1px solid var(--linea); }
+
+    /* portada */
+    .hero { background:linear-gradient(135deg,#F7EBDD 0%,#FBF7F0 60%); border:1px solid var(--linea);
+            border-radius:22px; padding:28px 32px 22px; margin-bottom:18px; position:relative; overflow:hidden; }
+    .hero:after { content:""; position:absolute; left:32px; right:32px; bottom:16px; height:7px;
+                  background:var(--madera); border-radius:4px; opacity:.85; box-shadow:0 6px 0 -2px #6d482d; }
+    .hero h1 { font-size:2.5rem; margin:0 0 4px; line-height:1.1; }
+    .hero h1 em { color:var(--acento); font-style:italic; }
+    .hero p { color:var(--suave); margin:0 0 18px; font-size:1.05rem; }
+    .estante { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:22px; }
+    .stat { background:white; border:1px solid var(--linea); border-radius:14px; padding:10px 16px; min-width:150px; }
+    .stat b { display:block; font-family:'Fraunces',serif; font-size:1.55rem; color:var(--tinta); line-height:1.1; }
+    .stat span { color:var(--suave); font-size:.82rem; }
+
+    /* pestañas tipo píldora */
+    .stTabs [data-baseweb="tab-list"] { gap:6px; border-bottom:none; flex-wrap:wrap; }
+    .stTabs [data-baseweb="tab"] { background:white; border:1px solid var(--linea); border-radius:999px;
+                                   padding:6px 16px; height:auto; }
+    .stTabs [aria-selected="true"] { background:var(--tinta) !important; border-color:var(--tinta) !important; }
+    .stTabs [aria-selected="true"] p { color:white !important; }
+    .stTabs [data-baseweb="tab-highlight"], .stTabs [data-baseweb="tab-border"] { display:none; }
+
+    /* tarjetas */
+    [data-testid="stVerticalBlockBorderWrapper"] { background:white; border-radius:18px !important;
+        border-color:var(--linea) !important; transition:box-shadow .2s, transform .2s; }
+    [data-testid="stVerticalBlockBorderWrapper"]:hover { box-shadow:0 8px 24px rgba(43,33,24,.08); }
+    .ficha { display:flex; gap:14px; align-items:flex-start; }
+    .icono { width:64px; height:64px; min-width:64px; border-radius:16px; display:flex; align-items:center;
+             justify-content:center; font-size:2rem; }
+    .ficha h4 { font-family:'Fraunces',serif; font-size:1.12rem; margin:0 0 4px; color:var(--tinta); padding:0; }
+    .meta { color:var(--suave); font-size:.84rem; margin-top:6px; }
+    .motivo { background:#FFF4EC; border-left:3px solid var(--acento); padding:6px 10px; border-radius:6px;
+              font-size:.9rem; margin-top:8px; color:var(--tinta); }
+    .emoji { font-size:2rem; line-height:1; }
+    .chip { display:inline-block; padding:2px 10px; border-radius:999px; font-size:.75rem; margin-right:6px; font-weight:500; }
+    .libre { background:#DFF0E3; color:#1F5C33; }
+    .ocupado { background:#F9E0DA; color:#8A2C17; }
+    .ia { background:#EDE7FB; color:#4B3A9C; }
+    .cat { background:#F3ECE1; color:var(--madera); }
+
+    .stButton button[kind="primary"], .stFormSubmitButton button { border-radius:999px; font-weight:700; }
+    .stTextInput input, .stTextArea textarea { border-radius:12px; }
     </style>
     """,
     unsafe_allow_html=True,
@@ -47,7 +97,7 @@ edificios = [dict(r) for r in con.execute("SELECT * FROM edificios ORDER BY id")
 nombres_ed = {e["id"]: f"{e['nombre']} ({e['distrito']})" for e in edificios}
 
 with st.sidebar:
-    st.title("📦 Repisa")
+    st.markdown("<h2 class='serif' style='margin-bottom:0'>📦 Repisa</h2>", unsafe_allow_html=True)
     st.caption("La biblioteca de cosas de tu edificio")
     ed_id = st.selectbox("Mi edificio", list(nombres_ed), format_func=nombres_ed.get)
     vecinos_ed = [dict(r) for r in con.execute("SELECT * FROM vecinos WHERE edificio_id=? ORDER BY depto", (ed_id,))]
@@ -70,18 +120,19 @@ por_id = {o["id"]: o for o in catalogo}
 
 
 def tarjeta_objeto(o: dict, clave: str, motivo: str | None = None):
-    chip = '<span class="chip libre">Disponible hoy</span>' if o["disponible"] else '<span class="chip ocupado">Reservado hoy</span>'
+    chip = '<span class="chip libre">● Disponible hoy</span>' if o["disponible"] else '<span class="chip ocupado">● Reservado hoy</span>'
     ia_chip = '<span class="chip ia">✨ catalogado con IA</span>' if o.get("catalogado_por") == "ia" else ""
+    fondo = COLOR_CAT.get(o["categoria"], "#ECE8E1")
+    motivo_html = f'<div class="motivo">💡 {motivo}</div>' if motivo else ""
     with st.container(border=True):
-        c1, c2 = st.columns([1, 6])
-        c1.markdown(f'<div class="emoji">{o["emoji"]}</div>', unsafe_allow_html=True)
-        c2.markdown(f"**{o['nombre']}** · {o['categoria']}  \n{chip}{ia_chip}", unsafe_allow_html=True)
-        if motivo:
-            c2.markdown(f"💡 _{motivo}_")
-        c2.caption(
-            f"Dpto. {o['depto']} · {o['edificio']} · estado: {o['estado']} · "
-            f"vale ~S/ {o['valor_soles']} · garantía S/ {o['deposito_soles']}"
+        st.markdown(
+            f'''<div class="ficha"><div class="icono" style="background:{fondo}">{o["emoji"]}</div>
+            <div><h4>{o["nombre"]}</h4>{chip}<span class="chip cat">{o["categoria"]}</span>{ia_chip}
+            <div class="meta">Dpto. {o["depto"]} · {o["edificio"]}<br>{o["estado"]} · vale ~S/ {o["valor_soles"]}
+            · garantía S/ {o["deposito_soles"]}</div>{motivo_html}</div></div>''',
+            unsafe_allow_html=True,
         )
+        c2 = st
         with c2.expander("Reservar"):
             if o.get("reglas"):
                 st.caption(f"📜 {o['reglas']}")
@@ -100,6 +151,20 @@ def tarjeta_objeto(o: dict, clave: str, motivo: str | None = None):
                 else:
                     st.warning("Elige las dos fechas.")
 
+
+met_ed = db.metricas(con, ed_id)
+libres_hoy = sum(o["disponible"] for o in catalogo)
+st.markdown(
+    f"""<div class="hero"><h1>Lo que tu edificio <em>ya tiene</em>.</h1>
+    <p>Pide prestado en lugar de comprar. Presta lo que guardas. Reglas claras, garantía y reservas.</p>
+    <div class="estante">
+      <div class="stat"><b>{len(catalogo)}</b><span>cosas en la repisa</span></div>
+      <div class="stat"><b>{libres_hoy}</b><span>disponibles hoy</span></div>
+      <div class="stat"><b>{met_ed['prestamos']}</b><span>préstamos registrados</span></div>
+      <div class="stat"><b>S/ {met_ed['compras_evitadas']:,}</b><span>en compras evitadas</span></div>
+    </div></div>""",
+    unsafe_allow_html=True,
+)
 
 tab_pedir, tab_prestar, tab_mapa, tab_tienda, tab_panel = st.tabs(
     ["🔎 Pedir prestado", "➕ Prestar algo", "🗺️ Mapa del barrio", "🛍️ Tienda", "📊 Panel de la junta"]

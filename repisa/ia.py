@@ -279,12 +279,16 @@ _TEMAS = {
 
 def recomendar_reglas(necesidad: str, catalogo: list[dict]) -> dict:
     t = _norm(necesidad)
-    cats: list[str] = []
+    cats: dict[str, str] = {}  # categoría -> tema que la activó
     for clave, cs in _TEMAS.items():
         if clave in t:
-            cats += [c for c in cs if c not in cats]
+            for c in cs:
+                cats.setdefault(c, clave)
     elegidos = []
     for o in catalogo:
-        if o["categoria"] in cats or any(p in _norm(o["nombre"]) for p in t.split() if len(p) > 3):
-            elegidos.append({"id": o["id"], "por_que": f"Es de {o['categoria'].lower()}."})
+        if o["categoria"] in cats:
+            elegidos.append({"id": o["id"], "por_que": f"Sirve para tu {cats[o['categoria']]}: es de {o['categoria'].lower()}."})
+        elif any(p in _norm(o["nombre"]) for p in t.split() if len(p) > 3):
+            elegidos.append({"id": o["id"], "por_que": "Coincide con lo que buscas."})
+    elegidos.sort(key=lambda x: not next(o for o in catalogo if o["id"] == x["id"]).get("disponible", True))
     return {"objetos": elegidos[:6], "falta": "" if elegidos else "No encontré nada parecido en el edificio."}
