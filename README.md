@@ -31,9 +31,9 @@ La idea nace de un amigo que quería hacer un banco de juegos de mesa para su ed
 
 | # | Quién | Lo más importante que dijo |
 |---|-------|----------------------------|
-| 1 | `<<p. ej. vecina, 34 años, Jesús María>>` | `<<…>>` |
-| 2 | `<<…>>` | `<<…>>` |
-| 3 | `<<…>>` | `<<…>>` |
+| 1 | Perfil no mencionado en el audio *(por completar)* | No le prestaría a un vecino "por si me lo malogran"; le daría confianza que la persona sepa usar la herramienta. |
+| 2 | Perfil no mencionado en el audio *(por completar)* | Pide un responsable del estado de la herramienta, garantía y foto del uso. Sobre pagar: "depende de qué cosas son", sin dar monto. |
+| 3 | Perfil no mencionado en el audio *(por completar)* | Prestaría a quien ya tenga historial de devolver bien; pagaría "creo que 20 soles" al mes, según la cantidad de cosas. |
 
 ## 4. Solución e insight
 

@@ -1,8 +1,11 @@
 """Transcribe las entrevistas con usuarios potenciales usando Whisper en local (sesión 13).
 
 Uso (desde la carpeta del proyecto):
-    pip install faster-whisper
+    pip install faster-whisper "av<17"
     python scripts/transcribir.py entrevistas
+
+Nota: con Python 3.14, pip instala av 19, que es incompatible con faster-whisper
+(TypeError: open() got an unexpected keyword argument 'metadata_errors'); por eso "av<17".
 
 Lee los .m4a de la carpeta indicada y escribe transcripciones/entrevista_N.txt.
 La carpeta transcripciones/ está en .gitignore: puede contener nombres o datos

@@ -8,3 +8,4 @@ data/*.db
 transcripciones/
 entrevistas/
 *.m4a
+.DS_Store
